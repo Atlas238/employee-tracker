@@ -3,7 +3,7 @@ const table = require('console.table');
 const mysql = require('mysql2');
 
 // Inquirer Prompts
-const options = [`View all departments`, `View all roles`, `View all employees`, new inquirer.Separator(), `Add a department`, `Add a role`, `Add an employee`, new inquirer.Separator(), `Update an employee role`, `Update employee managers`, new inquirer.Separator(), `View employees by manager`, `View employees by department`, new inquirer.Separator(), `Delete department`, `Delete role`, `Delete employee`, new inquirer.Separator(), `Quit`, new inquirer.Separator()];
+const options = [`View all departments`, `View all roles`, `View all employees`, new inquirer.Separator(), `Add a department`, `Add a role`, `Add an employee`, new inquirer.Separator(), `Update an employee role`, `Update employee managers`, new inquirer.Separator(), `View employees by department`, new inquirer.Separator(), `Delete department`, `Delete role`, `Delete employee`, new inquirer.Separator(), `Quit`, new inquirer.Separator()];
 
 const database = mysql.createConnection({
     host: 'localhost',
@@ -17,7 +17,7 @@ const init = async () => {
     let exit = false;
     let tableRender;
     let lineBr = '\n';
-    
+
     while (!exit) {
 
         // What would the user like to do?
@@ -33,7 +33,7 @@ const init = async () => {
             // View all departments
             case `View all departments`:
                 database.query('SELECT * FROM department;',(err, data) => {
-                    if(err)console.log(err);
+                    // if(err)console.log(err);
                     tableRender = table.getTable(data);
                     console.log(lineBr + tableRender);
                 });
@@ -42,7 +42,7 @@ const init = async () => {
             // View all roles
             case `View all roles`:
                 database.query('SELECT * FROM role;',(err, data) => {
-                    if(err)console.log(err);
+                    // if(err)console.log(err);
                     tableRender = table.getTable(data);
                     console.log(lineBr + tableRender);
                 });
@@ -51,7 +51,7 @@ const init = async () => {
             // View all employees
             case `View all employees`:
                 database.query('SELECT * FROM employee;',(err, data) => {
-                    if(err)console.log(err);
+                    // if(err)console.log(err);
                     tableRender = table.getTable(data);
                     console.log(lineBr + tableRender);
                 });
@@ -66,7 +66,6 @@ const init = async () => {
                 })
                 .then((response) => {
                     database.query('INSERT INTO department (name) VALUES (?)', [response.departmentName], (err, data) => {
-                        if(err) console.log(err);
                         console.log(`Added ${response.departmentName} to the database.`);
                     });
                 }).catch();
@@ -111,14 +110,14 @@ const init = async () => {
                                 .then((response) => {
                                     if (response.departmentName.length > 0) {
                                         database.query('INSERT INTO department (name) VALUES (?)', [response.departmentName], (err, data) => {
-                                            if(err) console.log(err);
+                                            // if(err) console.log(err);
                                             console.log(lineBr + `Added ${response.departmentName} to the database.`);
                                         });
                                         console.log('Added your new department, adding your new role to this department.');
                                         database.query('SELECT * FROM department WHERE name=?', [response.departmentName], (err, data) => {
                                             let newDept = Object.values(JSON.parse(JSON.stringify(data)));
                                             database.query('INSERT INTO role (title, salary, department_id) VALUES (?,?,?)',[roleResponse.roleTitle, roleResponse.roleSalary, newDept.id], (err, data) => {
-                                                if(err) console.log(err);
+                                                // if(err) console.log(err);
                                             });
                                         });
                                     };
@@ -127,7 +126,7 @@ const init = async () => {
 
                             default:
                                 database.query('INSTER INTO role (title, salary, department_id) VALUES (?,?,?)',[roleResponse.roleTitle, roleResponse.roleSalary, roleResponse.roleDepartment], (err, data) => {
-                                    if(err) console.log(err);
+                                    // if(err) console.log(err);
                                 });
                                 console.log('Added your role to the database');
                                 break;
@@ -225,14 +224,14 @@ const init = async () => {
                                                     .then((response) => {
                                                         if (response.departmentName.length > 0) {
                                                             database.query('INSERT INTO department (name) VALUES (?)', [response.departmentName], (err, data) => {
-                                                                if(err) console.log(err);
+                                                                // if(err) console.log(err);
                                                                 console.log(lineBr + `Added ${response.departmentName} to the database.`);
                                                             });
                                                             console.log('Added your new department, adding your new role to this department.');
                                                             database.query('SELECT * FROM department WHERE name=?', [response.departmentName], (err, data) => {
                                                                 let newDept = Object.values(JSON.parse(JSON.stringify(data)));
                                                                 database.query('INSERT INTO role (title, salary, department_id) VALUES (?,?,?)',[roleResponse.roleTitle, roleResponse.roleSalary, newDept.id], (err, data) => {
-                                                                    if(err) console.log(err);
+                                                                    // if(err) console.log(err);s
                                                                 });
                                                             });
                                                         };
@@ -241,7 +240,7 @@ const init = async () => {
                                                 // IF THEY PICKED AN EXISTING DEPARTMENT
                                                 default:
                                                     database.query('INSTER INTO role (title, salary, department_id) VALUES (?,?,?)',[roleResponse.roleTitle, roleResponse.roleSalary, roleResponse.roleDepartment], (err, data) => {
-                                                        if(err) console.log(err);
+                                                        // if(err) console.log(err);
                                                         console.log('Added your role to the database');
                                                     });
                                                     break;
@@ -265,7 +264,7 @@ const init = async () => {
                                         };
                                     };     
                                     database.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)',[newEmployFirstName,newEmployLastName,newEmployRoleID,newEmployeManagerID], (err, data) => {
-                                        if(err) console.log(err);
+                                        // if(err) console.log(err);
                                         console.log('Added your new Employee to the database');
                                     });
                                     break;
@@ -342,14 +341,14 @@ const init = async () => {
                                                     .then((response) => {
                                                         if (response.departmentName.length > 0) {
                                                             database.query('INSERT INTO department (name) VALUES (?)', [response.departmentName], (err, data) => {
-                                                                if(err) console.log(err);
+                                                                // if(err) console.log(err);
                                                                 console.log(lineBr + `Added ${response.departmentName} to the database.`);
                                                             });
                                                             console.log('Added your new department, adding your new role to this department.');
                                                             database.query('SELECT * FROM department WHERE name=?', [response.departmentName], (err, data) => {
                                                                 let newDept = Object.values(JSON.parse(JSON.stringify(data)));
                                                                 database.query('INSERT INTO role (title, salary, department_id) VALUES (?,?,?)',[roleResponse.roleTitle, roleResponse.roleSalary, newDept.id], (err, data) => {
-                                                                    if(err) console.log(err);
+                                                                    // if(err) console.log(err);
                                                                 });
                                                             });
                                                         };
@@ -358,7 +357,7 @@ const init = async () => {
 
                                             default:
                                                 database.query('INSTER INTO role (title, salary, department_id) VALUES (?,?,?)',[roleResponse.roleTitle, roleResponse.roleSalary, roleResponse.roleDepartment], (err, data) => {
-                                                    if(err) console.log(err);
+                                                    // if(err) console.log(err);
                                                 });
                                                 console.log('Added your role to the database');
                                                 break;
@@ -376,7 +375,7 @@ const init = async () => {
                                         };
                                     };
                                     database.query('UPDATE employee SET role_id=? WHERE name=?', [updatedRoleID, employeeToUpdate], (err, data) => {
-                                        if(err) console.log(err);
+                                        // if(err) console.log(err);
                                     });
                                     break;
                             }
@@ -389,7 +388,7 @@ const init = async () => {
             // Update employee managers
             case `Update employee managers`:
                 database.query('SELECT * FROM employee;',(err, data) => {
-                    if(err) console.log(err);
+                    // if(err) console.log(err);
                     let employeeChoices = [];
                     data.forEach(employee => {
                         employeeChoices.push(employee.first_name,employee.last_name);
@@ -401,7 +400,7 @@ const init = async () => {
                         choices: employeeChoices
                     }).then(( choiceofEmployee ) => {
                         database.query('SELECT * FROM employee WHERE manager_id IS NULL;',(err, managerData) => {
-                            if(err) console.log(err);
+                            // if(err) console.log(err);
                             let managerChoices = [];
                             managerData.forEach(manager => {
                                 let managerName = manager.first_name.concat(manager.last_name)
@@ -429,7 +428,7 @@ const init = async () => {
                                         };
                                     }));
                                     database.query('UPDATE employee SET manager_id=? WHERE first_name=? AND last_name=?;',[managerUpdate,employeeUpdateeFirst,employeeUpdateLast],(err,data) => {
-                                        if (err) console.log(err);
+                                        // if (err) console.log(err);
                                         console.log('Employee Manager updated.');
                                     });
                                 });
@@ -438,36 +437,6 @@ const init = async () => {
                     });
                 }).catch();
                 exit = false;
-                break;
-
-            // View employees by manager
-            case `View employees by manager`:
-                database.query('SELECT * FROM employee WHERE manager_id IS NULL;',(err, data) => {
-                    const existingManagers = Object.values(JSON.parse(JSON.stringify(data)));
-                    let managers = [];
-                    existingManagers.forEach(manager => {
-                        managers.push(manager.name);
-                    });
-                    inquirer.prompt({
-                        type: 'list',
-                        name: 'managerSelect',
-                        message: `Which manager's employees would you like to view?`,
-                        choices: managers
-                    }).then((response)=> {
-                        let managerSelectID;
-                        existingManagers.forEach(manager => {
-                            if (response.managerSelect === manager.name) {
-                                managerSelectID = manager.id;
-                            }
-                        });
-                        database.query('SELECT * FROM employee WHERE manager_id=?',[managerSelectID], (err, data) => {
-                            if(err) console.log(err);
-                            let tableRender = table.getTable(data);
-                            console.log(`${managerSelect}'s Employees`);
-                            console.log(tableRender);
-                        });
-                    }).catch();
-                });
                 break;
 
             // View employees by department
@@ -497,8 +466,12 @@ const init = async () => {
                                 roleIDArr.push(roles.id);
                             });
                             database.query('SELECT * FROM employee WHERE role_id=?', roleIDArr, (err, data) => {
-                                tableRender = table.getTable(data);
-                                console.log(lineBr + tableRender); 
+                                if(data){
+                                    tableRender = table.getTable(data);
+                                    console.log(lineBr + tableRender); 
+                                } else {
+                                    console.log('No Employees in this department');
+                                };
                             });
                         });
                     }).catch();
@@ -508,7 +481,7 @@ const init = async () => {
             // Delete department
             case `Delete department`:
                 database.query('SELECT * FROM department',(err, data) => {
-                    if(err) console.log(err);
+                    // if(err) console.log(err);
                     const currentDepartments = Object.values(JSON.parse(JSON.stringify(data)));
                     const departments = [];
                     currentDepartments.forEach(department => {
@@ -522,7 +495,7 @@ const init = async () => {
                     })
                     .then((response) => {
                         database.query('DELETE FROM department WHERE name=?',[response.departmentToDelete], (err, data) => {
-                            if(err) console.log(err);
+                            // if(err) console.log(err);
                         });
                         console.log(`Deleted ${response.departmentToDelete} from the database.`);
                     }).catch();
@@ -550,7 +523,7 @@ const init = async () => {
                             }
                         });
                         database.query('DELETE FROM role WHERE id=?',[roleToDeleteID], (err, data) => {
-                            if(err) console.log(err);
+                            // if(err) console.log(err);
                             console.log('Deleted the selected role from the database')
                         });
                     }).catch();
@@ -579,7 +552,7 @@ const init = async () => {
                         }
                         });
                         database.query('DELETE FROM employee WHERE id=?',[employeeToDeleteID],(err, data) => {
-                        if(err) console.log(err);
+                        // if(err) console.log(err);
                         console.log('Employee deleted from database');
                         });
                     }).catch();
