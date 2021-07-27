@@ -13,10 +13,13 @@ const database = mysql.createConnection({
 });
 
 const init = async () => {
+
     let exit = false;
     let tableRender;
     let lineBr = '\n';
+    
     while (!exit) {
+
         // What would the user like to do?
         const response = await inquirer.prompt({
             type: 'list',
@@ -77,7 +80,7 @@ const init = async () => {
                     departments.forEach(department => {
                         departmentChoices.push(department.name)
                     });
-                    departmentChoices.push(.('Add new Department'));
+                    departmentChoices.push('Add new Department');
                     const roleQs = [{
                         type: 'input',
                         name: 'roleTitle',
@@ -191,7 +194,7 @@ const init = async () => {
                                         departments.forEach(department => {
                                             departmentChoices.push(department.name)
                                         });
-                                        departmentChoices.push(.('Add new Department'));
+                                        departmentChoices.push('Add new Department');
                                         const roleQs = [{
                                         type: 'input',
                                         name: 'roleTitle',
@@ -383,11 +386,60 @@ const init = async () => {
                 });
                 break;
 
-            // TODO: Update employee managers
+            // Update employee managers
             case `Update employee managers`:
-                
+                database.query('SELECT * FROM employee;',(err, data) => {
+                    if(err) console.log(err);
+                    let employeeChoices = [];
+                    data.forEach(employee => {
+                        employeeChoices.push(employee.first_name,employee.last_name);
+                    });
+                    inquirer.prompt({
+                        type: 'list',
+                        name:'employeeChosen',
+                        message: 'Select an employee whose manager you would like to update?',
+                        choices: employeeChoices
+                    }).then(( choiceofEmployee ) => {
+                        database.query('SELECT * FROM employee WHERE manager_id IS NULL;',(err, managerData) => {
+                            if(err) console.log(err);
+                            let managerChoices = [];
+                            managerData.forEach(manager => {
+                                let managerName = manager.first_name.concat(manager.last_name)
+                                managerChoices.push(managerName);
+                            });
+                            inquirer.prompt({
+                                type:'list',
+                                name:'managerChosen',
+                                message:'Which manager would you like to assign?',
+                                choices: managerChoices
+                            }).then((chosenManager) => {
+                                let managerUpdate;
+                                let employeeUpdateeFirst;
+                                let employeeUpdateLast;
+                                database.query('SELECT * FROM employee WHERE manager_id IS NOT NULL;', (err, employeeData) => {
+                                    employeeData.forEach(employee => {
+                                        if(choiceofEmployee === employee.first_name,employee.last_name){
+                                            employeeUpdateeFirst = employee.first_name;
+                                            employeeUpdateLast = employee.last_name;
+                                        };
+                                    });
+                                    managerData.forEach((manager => {
+                                        if(chosenManager === manager.first_name,manager.last_name){
+                                            managerUpdate = manager.id;
+                                        };
+                                    }));
+                                    database.query('UPDATE employee SET manager_id=? WHERE first_name=? AND last_name=?;',[managerUpdate,employeeUpdateeFirst,employeeUpdateLast],(err,data) => {
+                                        if (err) console.log(err);
+                                        console.log('Employee Manager updated.');
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }).catch();
                 exit = false;
                 break;
+
             // View employees by manager
             case `View employees by manager`:
                 database.query('SELECT * FROM employee WHERE manager_id IS NULL;',(err, data) => {
